@@ -1,0 +1,38 @@
+# .NET 编译输出
+[Bb]in/
+[Oo]bj/
+
+# Visual Studio / VS Code 的本机设置
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# 本次项目构建时生成的本地工具和 NuGet 缓存
+.appdata/
+.dotnet-cli/
+.localappdata/
+.nuget-packages/
+.installer-cache/
+
+# 本机学习数据、导出备份和日志（不应上传）
+ai-boss-data.json
+ai-boss-data-corrupt-*.json
+AI-Boss-备份-*.json
+AIBossData/
+*.log
+
+# 可能包含密钥或证书的本机文件
+.env
+.env.*
+!.env.example
+*.pfx
+*.p12
+*.key
+*.pem
+
+# NuGet 打包输出
+*.nupkg
+*.snupkg
