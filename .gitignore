@@ -36,3 +36,6 @@ AIBossData/
 # NuGet 打包输出
 *.nupkg
 *.snupkg
+
+# Local release artifacts
+AI-Boss-Releases/

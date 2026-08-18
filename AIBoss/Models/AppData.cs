@@ -54,6 +54,18 @@ public sealed class IdeaItem
     public string Id { get; set; } = Guid.NewGuid().ToString("N");
     public string Content { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+    public override string ToString()
+    {
+        var singleLine = string.IsNullOrWhiteSpace(Content)
+            ? string.Empty
+            : Content.Replace("\r", " ").Replace("\n", " ").Trim();
+        if (singleLine.Length > 40)
+        {
+            singleLine = singleLine[..40] + "…";
+        }
+        return $"{CreatedAt:yyyy-MM-dd HH:mm}  |  {singleLine}";
+    }
 }
 
 public sealed class BossRule

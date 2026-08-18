@@ -28,7 +28,7 @@ public sealed class MainForm : Form
 
     public MainForm()
     {
-        Text = "AI Boss V0.1 - 学习执行助手";
+        Text = "AI Boss V0.2 - 学习执行助手";
         StartPosition = FormStartPosition.CenterScreen;
         MinimumSize = new Size(900, 680);
         Size = new Size(980, 760);
@@ -52,7 +52,7 @@ public sealed class MainForm : Form
         exportButton.Click += ExportButton_Click;
         var dataPathButton = new Button { Text = "打开数据文件夹", Dock = DockStyle.Right, Width = 140 };
         dataPathButton.Click += DataPathButton_Click;
-        var titleLabel = new Label { Text = "AI Boss V0.1（离线本地版）", Dock = DockStyle.Left, AutoSize = true, Font = new Font("Microsoft YaHei UI", 12, FontStyle.Bold), Padding = new Padding(12, 14, 0, 0) };
+        var titleLabel = new Label { Text = "AI Boss V0.2（离线本地版）", Dock = DockStyle.Left, AutoSize = true, Font = new Font("Microsoft YaHei UI", 12, FontStyle.Bold), Padding = new Padding(12, 14, 0, 0) };
         var header = new Panel { Dock = DockStyle.Top, Height = 54 };
         header.Controls.Add(exportButton);
         header.Controls.Add(dataPathButton);
@@ -144,15 +144,21 @@ public sealed class MainForm : Form
         layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
         layout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
         layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-        layout.Controls.Add(new Label { Text = "想到与当前任务无关的事，快速写在这里。保存后即可继续专注。", AutoSize = true }, 0, 0);
+        layout.Controls.Add(new Label { Text = "想到与当前任务无关的事，快速写在这里。保存后即可继续专注。双击列表中的想法可查看、编辑或删除全文。", AutoSize = true }, 0, 0);
         _ideaBox.Dock = DockStyle.Fill;
         _ideaBox.Margin = new Padding(3, 10, 3, 8);
         layout.Controls.Add(_ideaBox, 0, 1);
+        var buttons = new FlowLayoutPanel { AutoSize = true };
         var saveIdeaButton = new Button { Text = "保存想法", Width = 110 };
         saveIdeaButton.Click += SaveIdeaButton_Click;
-        layout.Controls.Add(saveIdeaButton, 0, 2);
+        buttons.Controls.Add(saveIdeaButton);
+        var deleteIdeaButton = new Button { Text = "删除想法", Width = 110, Margin = new Padding(8, 0, 0, 0) };
+        deleteIdeaButton.Click += DeleteIdeaButton_Click;
+        buttons.Controls.Add(deleteIdeaButton);
+        layout.Controls.Add(buttons, 0, 2);
         _ideaList.Dock = DockStyle.Fill;
         _ideaList.Margin = new Padding(3, 14, 3, 3);
+        _ideaList.DoubleClick += IdeaList_DoubleClick;
         layout.Controls.Add(_ideaList, 0, 3);
         layout.Controls.Add(new Label { Text = "想法会自动保存到本机，不会影响正在进行的计时。", AutoSize = true, Margin = new Padding(3, 8, 3, 3) }, 0, 4);
         tab.Controls.Add(layout);
@@ -164,6 +170,15 @@ public sealed class MainForm : Form
         var tab = new TabPage("每日学习日志") { Padding = new Padding(14) };
         var refreshButton = new Button { Text = "刷新记录", Dock = DockStyle.Top, Height = 34 };
         refreshButton.Click += (_, _) => RefreshLogGrid();
+        var hint = new Label
+        {
+            Text = "双击任意记录可查看完整内容、编辑或删除。列表仅显示摘要，长文本请在详情窗口中查看。",
+            Dock = DockStyle.Top,
+            Height = 34,
+            Padding = new Padding(0, 8, 0, 4)
+        };
+        var deleteLogButton = new Button { Text = "删除选中记录", Dock = DockStyle.Bottom, Height = 38 };
+        deleteLogButton.Click += DeleteLogButton_Click;
         _logGrid.Dock = DockStyle.Fill;
         _logGrid.ReadOnly = true;
         _logGrid.AllowUserToAddRows = false;
@@ -171,16 +186,19 @@ public sealed class MainForm : Form
         _logGrid.RowHeadersVisible = false;
         _logGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         _logGrid.AutoGenerateColumns = false;
+        _logGrid.CellDoubleClick += LogGrid_CellDoubleClick;
         _logGrid.Columns.AddRange(
-            CreateLogColumn("日期", nameof(LogRow.Date), 95),
-            CreateLogColumn("任务", nameof(LogRow.Task), 140),
-            CreateLogColumn("计划产出", nameof(LogRow.PlannedOutput), 180),
-            CreateLogColumn("实际产出", nameof(LogRow.ActualOutput), 180),
-            CreateLogColumn("开始时间", nameof(LogRow.StartedAt), 130),
-            CreateLogColumn("结束时间", nameof(LogRow.EndedAt), 130),
-            CreateLogColumn("实际时长", nameof(LogRow.Duration), 90));
+            CreateLogColumn("日期", nameof(LogRow.Date), 85),
+            CreateLogColumn("任务", nameof(LogRow.Task), 120),
+            CreateLogColumn("计划产出", nameof(LogRow.PlannedOutput), 120),
+            CreateLogColumn("实际产出", nameof(LogRow.ActualOutput), 120),
+            CreateLogColumn("开始时间", nameof(LogRow.StartedAt), 115),
+            CreateLogColumn("结束时间", nameof(LogRow.EndedAt), 115),
+            CreateLogColumn("实际时长", nameof(LogRow.Duration), 70));
         tab.Controls.Add(_logGrid);
+        tab.Controls.Add(deleteLogButton);
         tab.Controls.Add(refreshButton);
+        tab.Controls.Add(hint);
         return tab;
     }
 
@@ -351,6 +369,54 @@ public sealed class MainForm : Form
         _ideaBox.Focus();
     }
 
+    private void IdeaList_DoubleClick(object? sender, EventArgs e)
+    {
+        if (_ideaList.SelectedItem is not IdeaItem idea)
+        {
+            return;
+        }
+        OpenIdeaDetail(idea);
+    }
+
+    private void OpenIdeaDetail(IdeaItem idea)
+    {
+        using var form = new IdeaDetailForm(idea);
+        if (form.ShowDialog(this) != DialogResult.OK)
+        {
+            return;
+        }
+
+        if (form.IsDeleted)
+        {
+            _data.Ideas.Remove(idea);
+        }
+        else
+        {
+            idea.Content = form.EditedContent;
+        }
+        SaveData();
+        RefreshIdeaList();
+    }
+
+    private void DeleteIdeaButton_Click(object? sender, EventArgs e)
+    {
+        if (_ideaList.SelectedItem is not IdeaItem idea)
+        {
+            MessageBox.Show("请先在列表中选择一条想法。", "IDEA BOX", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            return;
+        }
+
+        var confirm = MessageBox.Show("确定要删除这条想法吗？删除后无法恢复。", "确认删除", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+        if (confirm != DialogResult.Yes)
+        {
+            return;
+        }
+
+        _data.Ideas.Remove(idea);
+        SaveData();
+        RefreshIdeaList();
+    }
+
     private void SaveRulesButton_Click(object? sender, EventArgs e)
     {
         _rulesGrid.EndEdit();
@@ -463,7 +529,7 @@ public sealed class MainForm : Form
         _ideaList.Items.Clear();
         foreach (var idea in _data.Ideas.OrderByDescending(item => item.CreatedAt))
         {
-            _ideaList.Items.Add($"{idea.CreatedAt:yyyy-MM-dd HH:mm}  |  {idea.Content.Replace(Environment.NewLine, " ")}");
+            _ideaList.Items.Add(idea);
         }
         _ideaList.EndUpdate();
     }
@@ -474,15 +540,94 @@ public sealed class MainForm : Form
             .OrderByDescending(session => session.StartedAt)
             .Select(session => new LogRow
             {
+                Id = session.Id,
                 Date = session.StartedAt.ToString("yyyy-MM-dd"),
-                Task = session.TaskTitle,
-                PlannedOutput = session.PlannedOutput,
-                ActualOutput = session.ActualOutput,
+                Task = Summarize(session.TaskTitle, 24, "未命名任务"),
+                PlannedOutput = Summarize(session.PlannedOutput, 24, "未填写"),
+                ActualOutput = Summarize(session.ActualOutput, 24, "（未填写）"),
                 StartedAt = session.StartedAt.ToString("yyyy-MM-dd HH:mm"),
                 EndedAt = session.EndedAt.ToString("yyyy-MM-dd HH:mm"),
                 Duration = FormatSeconds(session.WorkedSeconds)
             })
             .ToList();
+    }
+
+    private void LogGrid_CellDoubleClick(object? sender, DataGridViewCellEventArgs e)
+    {
+        if (e.RowIndex < 0 || e.RowIndex >= _logGrid.Rows.Count)
+        {
+            return;
+        }
+        if (_logGrid.Rows[e.RowIndex].DataBoundItem is not LogRow row)
+        {
+            return;
+        }
+
+        var session = _data.WorkSessions.FirstOrDefault(item => item.Id == row.Id);
+        if (session is null)
+        {
+            return;
+        }
+        OpenSessionDetail(session);
+    }
+
+    private void OpenSessionDetail(WorkSession session)
+    {
+        using var form = new SessionDetailForm(session);
+        if (form.ShowDialog(this) != DialogResult.OK)
+        {
+            return;
+        }
+
+        if (form.IsDeleted)
+        {
+            _data.WorkSessions.Remove(session);
+        }
+        else
+        {
+            var edited = form.EditedSession;
+            session.TaskTitle = edited.TaskTitle;
+            session.PlannedOutput = edited.PlannedOutput;
+            session.ActualOutput = edited.ActualOutput;
+        }
+        SaveData();
+        RefreshLogGrid();
+    }
+
+    private void DeleteLogButton_Click(object? sender, EventArgs e)
+    {
+        if (_logGrid.CurrentRow?.DataBoundItem is not LogRow row)
+        {
+            MessageBox.Show("请先在列表中选择一条记录。", "每日学习日志", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            return;
+        }
+
+        var session = _data.WorkSessions.FirstOrDefault(item => item.Id == row.Id);
+        if (session is null)
+        {
+            return;
+        }
+
+        var confirm = MessageBox.Show($"确定要删除这条学习记录吗？\n\n任务：{row.Task}\n日期：{row.Date}\n\n删除后无法恢复。", "确认删除", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+        if (confirm != DialogResult.Yes)
+        {
+            return;
+        }
+
+        _data.WorkSessions.Remove(session);
+        SaveData();
+        RefreshLogGrid();
+    }
+
+    private static string Summarize(string text, int maxLength, string emptyText)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return emptyText;
+        }
+
+        var singleLine = text.Replace("\r", " ").Replace("\n", " ").Trim();
+        return singleLine.Length <= maxLength ? singleLine : singleLine[..maxLength] + "…";
     }
 
     private int SelectedMinutes() => _minutes30.Checked ? 30 : _minutes45.Checked ? 45 : 40;
@@ -501,6 +646,7 @@ public sealed class MainForm : Form
 
     private sealed class LogRow
     {
+        public string Id { get; init; } = string.Empty;
         public string Date { get; init; } = string.Empty;
         public string Task { get; init; } = string.Empty;
         public string PlannedOutput { get; init; } = string.Empty;
