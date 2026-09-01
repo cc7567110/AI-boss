@@ -39,3 +39,15 @@ AIBossData/
 
 # Local release artifacts
 AI-Boss-Releases/
+
+# Android 构建产物（APK/AAB 通过 GitHub Release 发布）
+*.apk
+*.aab
+
+# Android SDK 本地目录
+android-sdk/
+
+# 调试和诊断临时文件
+logcat_diagnosis.txt
+minimal-maui/
+publish-test*/
