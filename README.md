@@ -1,6 +1,6 @@
 # AI Boss V0.2.0
 
-AI Boss 是一个离线运行的 Windows 学习执行助手，通过任务管理、专注计时、执行记录和复盘机制帮助用户建立学习执行系统。
+AI Boss 是一个离线运行的学习执行助手，通过任务管理、专注计时、执行记录和复盘机制帮助用户建立学习执行系统。支持 Windows 电脑端和 Android 手机端。
 
 它诞生于一个简单的问题：
 “如果我总是无法按照计划行动，能不能创造一个系统来监督自己？”
@@ -40,9 +40,11 @@ V0.2 新增：
 - 编辑功能
 - 删除功能
 
-## 使用说明
+## 下载与安装
 
-Windows 用户可以在 Releases 页面下载最新版本压缩包：
+### Windows
+
+在 Releases 页面下载最新版本压缩包：
 
 ```text
 AI-Boss-v0.2.0-Windows-x64.zip
@@ -56,9 +58,20 @@ AIBoss.exe
 
 发布为自包含版本，使用者不需要另行安装 .NET Runtime。
 
+### Android
+
+在 Releases 页面下载 APK 文件：
+
+```text
+AI-Boss-Android-v0.2.0.apk
+```
+
+安装前需要在设备设置中允许"安装未知来源应用"。支持 Android 5.0（API 21）及以上版本。
+
 ## Changelog
 
 ### V0.2.0
+- 新增 Android 端（MAUI），功能与 Windows 端对齐
 - 优化 IDEA BOX 使用体验
 - 优化每日学习日志体验
 - 增加 IDEA BOX 编辑功能
@@ -76,65 +89,90 @@ AI Boss V0.2.0 本地运行，不需要账号，不依赖云端，不使用 Open
 
 默认数据位置：
 
-```text
-%LOCALAPPDATA%\AIBoss\ai-boss-data.json
-```
+- **Windows**：`%LOCALAPPDATA%\AIBoss\ai-boss-data.json`
+- **Android**：应用内部存储（`System.Environment.SpecialFolder.LocalApplicationData`）
 
-也可以通过软件右上角的“打开数据文件夹”查看它。
+Windows 端可以通过软件右上角的”打开数据文件夹”查看数据文件。
 
 ## 运行环境
 
+**Windows 端**
 - Windows 10 或 Windows 11（64 位）
 - 开发和编译：.NET 10 SDK
 - 运行开发版：.NET 10 Desktop Runtime
 
-发布为自包含 EXE 后，使用者不需要另行安装 .NET Runtime。
+**Android 端**
+- Android 5.0（API 21）及以上
+- 开发和编译：.NET 10 SDK + Android SDK
+
+发布为自包含版本后，使用者不需要另行安装运行时。
 
 ## 本地运行
 
-在项目根目录打开 PowerShell，执行：
+**Windows 端**
 
 ```powershell
 dotnet run --project .\AIBoss\AIBoss.csproj
 ```
 
-## 生成可发布的单文件 EXE
+**Android 端**
 
-在项目根目录执行：
+```powershell
+dotnet build .\AIBoss.Android\AIBoss.Android.csproj -c Release
+```
+
+## 发布
+
+**Windows — 单文件 EXE**
 
 ```powershell
 dotnet publish .\AIBoss\AIBoss.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true
 ```
 
-完成后，可双击运行的文件位于：
+输出位置：`AIBoss\bin\Release\net10.0-windows\win-x64\publish\AIBoss.exe`
 
-```text
-AIBoss\bin\Release\net10.0-windows\win-x64\publish\AIBoss.exe
+**Android — APK**
+
+```powershell
+dotnet publish .\AIBoss.Android\AIBoss.Android.csproj -c Release -f net10.0-android
 ```
 
-这个 EXE 会包含 Windows 运行所需的 .NET 组件，因此文件较大是正常现象。发布到 GitHub 时，建议将它作为 GitHub Release（发行版）的附件，而不是提交到源码仓库。
+输出位置：`AIBoss.Android\bin\Release\net10.0-android\publish\com.aiboss.app-Signed.apk`
+
+发布产物建议作为 GitHub Release 附件上传，不提交到源码仓库。
 
 ## 项目结构
 
 ```text
 AI-boss/
-├─ AIBoss.sln                 # Visual Studio 解决方案入口
-├─ AIBoss/
-│  ├─ AIBoss.csproj           # .NET 项目和版本配置
-│  ├─ Program.cs              # 程序启动入口
-│  ├─ MainForm.cs             # 主窗口
-│  ├─ Forms/                  # 任务、工作轮次、想法详情和学习日志详情的弹窗
-│  ├─ Models/                 # 任务、日志、想法、规则等数据结构
-│  └─ Services/               # 本地 JSON 保存逻辑
-├─ NuGet.Config               # .NET 构建时的官方包源配置
-├─ README.md                  # 项目说明
-└─ .gitignore                 # Git 忽略规则
+├─ AIBoss.sln                       # Visual Studio 解决方案入口
+├─ AIBoss/                          # Windows 电脑端（WinForms）
+│  ├─ AIBoss.csproj                 # .NET 项目和版本配置
+│  ├─ Program.cs                    # 程序启动入口
+│  ├─ MainForm.cs                   # 主窗口
+│  ├─ Forms/                        # 任务、工作轮次、想法详情和学习日志详情的弹窗
+│  ├─ Models/                       # 任务、日志、想法、规则等数据结构
+│  └─ Services/                     # 本地 JSON 保存逻辑
+├─ AIBoss.Android/                  # Android 手机端（MAUI）
+│  ├─ AIBoss.Android.csproj         # .NET MAUI Android 项目配置
+│  ├─ MauiProgram.cs                # MAUI 应用启动入口
+│  ├─ App.xaml / App.xaml.cs        # 应用定义
+│  ├─ MainPage.xaml / MainPage.cs   # 主页（导航入口）
+│  ├─ Pages/                        # 工作、想法、日志、规则等页面
+│  ├─ Models/                       # 共享数据结构
+│  ├─ Services/                     # Android 本地存储适配
+│  ├─ Platforms/Android/            # Android 平台配置和入口
+│  └─ Resources/                    # 图标、启动页等资源文件
+├─ NuGet.Config                     # .NET 构建时的官方包源配置
+├─ README.md                        # 项目说明
+└─ .gitignore                       # Git 忽略规则
 ```
 
 ## 开发技术
 
 - C# / .NET 10
 - Windows Forms（Windows 原生桌面界面）
+- .NET MAUI（Android 跨平台界面）
 - System.Text.Json（本地 JSON 文件存储）
 - 不使用第三方程序库
 
