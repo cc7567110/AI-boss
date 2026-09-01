@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AIBoss.Pages.IdeaPage"
+             Title="IDEA BOX">
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="10">
+            <Label Text="想到与当前任务无关的事，快速写在这里。保存后即可继续专注。"
+                   TextColor="#666666" FontSize="13" />
+
+            <Editor x:Name="IdeaEditor" Placeholder="写下你的想法..."
+                    AutoSize="TextChanges" MinimumHeightRequest="80"
+                    BackgroundColor="White" />
+
+            <HorizontalStackLayout Spacing="10">
+                <Button Text="保存想法" Clicked="SaveIdeaClicked" Style="{StaticResource PrimaryButton}" WidthRequest="120" />
+                <Button Text="删除想法" Clicked="DeleteIdeaClicked" Style="{StaticResource DangerButton}" WidthRequest="120" />
+            </HorizontalStackLayout>
+
+            <Label x:Name="IdeaCountLabel" Text="暂无想法" TextColor="#999999" FontSize="12" />
+
+            <CollectionView x:Name="IdeaCollection" SelectionMode="Single"
+                            SelectionChanged="IdeaSelected">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame Padding="10" Margin="0,0,0,6">
+                            <VerticalStackLayout>
+                                <Label Text="{Binding CreatedAt, StringFormat='{0:yyyy-MM-dd HH:mm}'}"
+                                       FontSize="11" TextColor="#999999" />
+                                <Label Text="{Binding Content}" FontSize="14"
+                                       MaxLines="2" LineBreakMode="TailTruncation" />
+                            </VerticalStackLayout>
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="IdeaTapped" />
+                            </Frame.GestureRecognizers>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Label Text="想法会自动保存到本机，不会影响正在进行的计时。"
+                   TextColor="#999999" FontSize="12" Margin="0,8,0,0" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

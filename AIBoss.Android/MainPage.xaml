@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<TabbedPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+            xmlns:pages="clr-namespace:AIBoss.Pages"
+            x:Class="AIBoss.MainPage"
+            Title="AI Boss V0.2"
+            BarBackgroundColor="#4361EE"
+            BarTextColor="White">
+    <NavigationPage Title="今日执行" IconImageSource="{x:Null}">
+        <x:Arguments>
+            <pages:WorkPage x:Name="WorkPage" />
+        </x:Arguments>
+    </NavigationPage>
+    <NavigationPage Title="IDEA BOX" IconImageSource="{x:Null}">
+        <x:Arguments>
+            <pages:IdeaPage x:Name="IdeaPage" />
+        </x:Arguments>
+    </NavigationPage>
+    <NavigationPage Title="学习日志" IconImageSource="{x:Null}">
+        <x:Arguments>
+            <pages:LogPage x:Name="LogPage" />
+        </x:Arguments>
+    </NavigationPage>
+    <NavigationPage Title="Boss 规则" IconImageSource="{x:Null}">
+        <x:Arguments>
+            <pages:RulesPage x:Name="RulesPage" />
+        </x:Arguments>
+    </NavigationPage>
+</TabbedPage>

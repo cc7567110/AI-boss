@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AIBoss.Pages.RulesPage"
+             Title="Boss 规则">
+    <VerticalStackLayout Padding="16" Spacing="10">
+        <Label Text="以下是固定监督规则。你可以修改文字或取消勾选，但程序不会自动新增或改写规则。"
+               TextColor="#666666" FontSize="13" />
+
+        <CollectionView x:Name="RulesCollection">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Padding="10" Margin="0,0,0,6">
+                        <HorizontalStackLayout Spacing="12">
+                            <CheckBox IsChecked="{Binding IsEnabled}" VerticalOptions="Center" />
+                            <Editor Text="{Binding Content}" AutoSize="TextChanges"
+                                    MinimumHeightRequest="40" HorizontalOptions="FillAndExpand"
+                                    FontSize="14" />
+                        </HorizontalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Button Text="保存规则" Clicked="SaveRulesClicked" Style="{StaticResource PrimaryButton}" />
+    </VerticalStackLayout>
+</ContentPage>

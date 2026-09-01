@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AIBoss.Pages.IdeaDetailPage"
+             Title="想法详情">
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="12">
+            <Label x:Name="CreatedAtLabel" TextColor="#999999" FontSize="12" />
+
+            <Editor x:Name="ContentEditor" AutoSize="TextChanges"
+                    MinimumHeightRequest="200" BackgroundColor="White"
+                    FontSize="15" />
+
+            <HorizontalStackLayout Spacing="10">
+                <Button Text="保存修改" Clicked="SaveClicked" Style="{StaticResource PrimaryButton}" WidthRequest="120" />
+                <Button Text="删除想法" Clicked="DeleteClicked" Style="{StaticResource DangerButton}" WidthRequest="120" />
+                <Button Text="取消" Clicked="CancelClicked" Style="{StaticResource SecondaryButton}" WidthRequest="80" />
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

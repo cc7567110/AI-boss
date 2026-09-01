@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AIBoss.Pages.WorkPage"
+             Title="今日执行">
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="12">
+
+            <Frame>
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="当前任务" Style="{StaticResource HeaderLabel}" />
+                    <BoxView HeightRequest="1" Color="#DDDDDD" />
+                    <HorizontalStackLayout Spacing="8">
+                        <Label Text="任务名称：" TextColor="#666666" />
+                        <Label x:Name="TaskTitleLabel" FontAttributes="Bold" />
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout Spacing="8">
+                        <Label Text="任务目标：" TextColor="#666666" />
+                        <Label x:Name="TaskGoalLabel" />
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout Spacing="8">
+                        <Label Text="任务状态：" TextColor="#666666" />
+                        <Label x:Name="TaskStatusLabel" />
+                    </HorizontalStackLayout>
+                    <Button Text="编辑当前任务" Clicked="EditTaskClicked" Style="{StaticResource SecondaryButton}" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <Frame>
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="当前工作轮次" Style="{StaticResource HeaderLabel}" />
+                    <BoxView HeightRequest="1" Color="#DDDDDD" />
+
+                    <HorizontalStackLayout Spacing="16" HorizontalOptions="Center">
+                        <RadioButton x:Name="Minutes30" Content="30 分钟" GroupName="Duration" />
+                        <RadioButton x:Name="Minutes40" Content="40 分钟" GroupName="Duration" IsChecked="True" />
+                        <RadioButton x:Name="Minutes45" Content="45 分钟" GroupName="Duration" />
+                    </HorizontalStackLayout>
+
+                    <Label x:Name="TimerLabel" Text="00:00 / 40:00" Style="{StaticResource TimerLabel}" />
+                    <Label x:Name="SessionStatusLabel" Text="尚未开始。请选择时长后点击「开始」。"
+                           HorizontalTextAlignment="Center" TextColor="#666666" />
+
+                    <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
+                        <Button x:Name="StartButton" Text="开始" Clicked="StartClicked" Style="{StaticResource PrimaryButton}" WidthRequest="100" />
+                        <Button x:Name="PauseButton" Text="暂停" Clicked="PauseClicked" Style="{StaticResource SecondaryButton}" WidthRequest="100" IsEnabled="False" />
+                        <Button x:Name="EndButton" Text="结束" Clicked="EndClicked" Style="{StaticResource DangerButton}" WidthRequest="100" IsEnabled="False" />
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Frame>
+
+            <Label Text="使用顺序：填写当前任务 → 选择时长 → 开始 → 完成后点击结束并记录实际产出。"
+                   TextColor="#999999" FontSize="12" Margin="0,8,0,0" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

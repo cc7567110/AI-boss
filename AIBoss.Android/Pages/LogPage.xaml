@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AIBoss.Pages.LogPage"
+             Title="学习日志">
+    <VerticalStackLayout Padding="16" Spacing="8">
+        <HorizontalStackLayout Spacing="10">
+            <Button Text="刷新记录" Clicked="RefreshClicked" Style="{StaticResource SecondaryButton}" WidthRequest="100" />
+            <Button Text="删除选中记录" Clicked="DeleteLogClicked" Style="{StaticResource DangerButton}" WidthRequest="130" />
+        </HorizontalStackLayout>
+
+        <Label Text="点击任意记录可查看完整内容、编辑或删除。" TextColor="#999999" FontSize="12" />
+
+        <CollectionView x:Name="LogCollection" SelectionMode="Single">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Padding="10" Margin="0,0,0,6">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="LogTapped" />
+                        </Frame.GestureRecognizers>
+                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
+                            <Label Text="{Binding TaskTitle}" FontAttributes="Bold" FontSize="15" Grid.Row="0" Grid.Column="0" />
+                            <Label Text="{Binding Duration}" FontSize="13" TextColor="#4361EE" Grid.Row="0" Grid.Column="1" />
+                            <Label Text="{Binding DateRange}" FontSize="12" TextColor="#999999" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" />
+                            <Label Text="{Binding ActualOutputSummary}" FontSize="13" MaxLines="1" LineBreakMode="TailTruncation"
+                                   Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" />
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </VerticalStackLayout>
+</ContentPage>
