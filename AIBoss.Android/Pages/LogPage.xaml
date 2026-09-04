@@ -3,15 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="AIBoss.Pages.LogPage"
              Title="学习日志">
-    <VerticalStackLayout Padding="16" Spacing="8">
+    <Grid Padding="16" RowSpacing="8" RowDefinitions="Auto,Auto,*">
         <HorizontalStackLayout Spacing="10">
             <Button Text="刷新记录" Clicked="RefreshClicked" Style="{StaticResource SecondaryButton}" WidthRequest="100" />
             <Button Text="删除选中记录" Clicked="DeleteLogClicked" Style="{StaticResource DangerButton}" WidthRequest="130" />
         </HorizontalStackLayout>
 
-        <Label Text="点击任意记录可查看完整内容、编辑或删除。" TextColor="#999999" FontSize="12" />
+        <Label Text="点击任意记录可查看完整内容、编辑或删除。" TextColor="#999999" FontSize="12" Grid.Row="1" />
 
-        <CollectionView x:Name="LogCollection" SelectionMode="Single">
+        <CollectionView x:Name="LogCollection" SelectionMode="Single" Grid.Row="2">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Frame Padding="10" Margin="0,0,0,6">
@@ -29,5 +29,5 @@
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-    </VerticalStackLayout>
+    </Grid>
 </ContentPage>
